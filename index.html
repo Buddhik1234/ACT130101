@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ACT 130101: Financial Accounting</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#065f46">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="FinAccounting">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Sinhala:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #065f46;
+            --primary-light: #d1fae5;
+            --primary-mid: #059669;
+            --accent: #f59e0b;
+            --bg: #f8f7f4;
+            --surface: #ffffff;
+            --border: #e5e2db;
+            --text-main: #1c1917;
+            --text-muted: #78716c;
+            --text-soft: #a8a29e;
+            --danger: #dc2626;
+            --sidebar-w: 260px;
+            --header-h: 60px;
+            --radius: 12px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', 'Noto Sans Sinhala', sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── HEADER ── */
+        #app-header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: var(--header-h);
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 14px;
+            z-index: 100;
+            box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+        }
+
+        #menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-main);
+            transition: background .15s;
+            flex-shrink: 0;
+        }
+        #menu-btn:active { background: var(--primary-light); }
+
+        .header-title-block { flex: 1; min-width: 0; }
+        .header-badge {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 2px 7px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .header-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.2;
+            margin-top: 2px;
+        }
+
+        .lens-switcher {
+            display: flex;
+            background: #f1ede8;
+            border-radius: 8px;
+            padding: 3px;
+            gap: 2px;
+            flex-shrink: 0;
+        }
+        .lens-btn {
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: all .2s;
+            color: var(--text-muted);
+            background: transparent;
+            white-space: nowrap;
+        }
+        .lens-btn.active {
+            background: var(--surface);
+            color: var(--text-main);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+        }
+
+        /* ── LAYOUT ── */
+        #layout {
+            display: flex;
+            padding-top: var(--header-h);
+            min-height: 100vh;
+        }
+
+        /* ── SIDEBAR ── */
+        #sidebar {
+            width: var(--sidebar-w);
+            flex-shrink: 0;
+            position: sticky;
+            top: var(--header-h);
+            height: calc(100vh - var(--header-h));
+            overflow-y: auto;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 12px 10px;
+        }
+        #sidebar::-webkit-scrollbar { width: 4px; }
+        #sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+        .sidebar-label {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: var(--text-soft);
+            padding: 4px 6px 8px;
+        }
+
+        .nav-pill {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 10px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            background: none;
+            text-align: left;
+            cursor: pointer;
+            transition: all .15s;
+            margin-bottom: 3px;
+            font-family: inherit;
+            position: relative;
+        }
+        .nav-pill:hover { background: #f5f1ec; }
+        .nav-pill.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(6,95,70,.25);
+        }
+        .nav-pill .pill-code {
+            font-size: 10px;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            opacity: .7;
+            flex-shrink: 0;
+            width: 28px;
+        }
+        .nav-pill .pill-title {
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1.3;
+            flex: 1;
+        }
+        .nav-pill .pill-check {
+            flex-shrink: 0;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .2s;
+            background: transparent;
+        }
+        .nav-pill.active .pill-check { border-color: rgba(255,255,255,.4); }
+        .nav-pill .pill-check.done {
+            background: var(--primary-mid);
+            border-color: var(--primary-mid);
+        }
+        .nav-pill.active .pill-check.done {
+            background: rgba(255,255,255,.9);
+            border-color: transparent;
+        }
+        .nav-pill .pill-check.done svg { display: block; }
+        .nav-pill .pill-check svg { display: none; }
+
+        /* ── MAIN CONTENT ── */
+        #main-area {
+            flex: 1;
+            min-width: 0;
+            padding: 16px;
+        }
+
+        .content-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.04);
+        }
+
+        .card-label {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: var(--text-soft);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+        .card-label::before {
+            content: '';
+            display: block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--primary-mid);
+        }
+
+        .card-body {
+            font-size: 14px;
+            line-height: 1.75;
+            color: #374151;
+        }
+
+        .trap-card {
+            background: #fffbeb;
+            border-left: 3px solid var(--accent);
+            border-radius: 0 8px 8px 0;
+            padding: 12px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #78350f;
+            line-height: 1.65;
+            margin-bottom: 8px;
+        }
+
+        /* ── HOME PAGE ── */
+        #home-page { display: none; }
+        #home-page.visible { display: block; }
+
+        .home-hero {
+            background: linear-gradient(135deg, var(--primary) 0%, #047857 100%);
+            border-radius: var(--radius);
+            padding: 24px 20px;
+            color: white;
+            margin-bottom: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+        .home-hero::before {
+            content: '';
+            position: absolute;
+            top: -30px; right: -30px;
+            width: 140px; height: 140px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.06);
+        }
+        .home-hero-badge {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            background: rgba(255,255,255,.18);
+            padding: 3px 9px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .home-hero h2 {
+            font-size: 22px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 6px;
+        }
+        .home-hero p {
+            font-size: 13px;
+            opacity: .85;
+            line-height: 1.5;
+        }
+
+        .home-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .stat-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 12px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+        }
+        .stat-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        .progress-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .progress-section h3 {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+        .progress-bar-wrap {
+            background: #f1ede8;
+            border-radius: 999px;
+            height: 8px;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-mid), var(--primary));
+            border-radius: 999px;
+            transition: width .4s ease;
+        }
+        .progress-text {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .module-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px;
+            cursor: pointer;
+            transition: all .15s;
+            position: relative;
+            overflow: hidden;
+        }
+        .module-card:hover { border-color: var(--primary-mid); box-shadow: 0 2px 10px rgba(6,95,70,.1); }
+        .module-card:active { transform: scale(.98); }
+        .module-card .mc-code {
+            font-size: 10px;
+            font-weight: 700;
+            font-family: monospace;
+            color: var(--primary-mid);
+            margin-bottom: 4px;
+        }
+        .module-card .mc-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1.3;
+        }
+        .module-card .mc-sinhala {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 3px;
+            line-height: 1.4;
+        }
+        .module-card .mc-done-badge {
+            position: absolute;
+            top: 10px; right: 10px;
+            width: 20px; height: 20px;
+            background: var(--primary-mid);
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .module-card.completed .mc-done-badge { display: flex; }
+        .module-card.completed { border-color: #a7f3d0; background: #f0fdf4; }
+
+        .key-topics {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .key-topics h3 {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+        .topic-list { display: flex; flex-direction: column; gap: 8px; }
+        .topic-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 12px;
+            background: var(--bg);
+            border-radius: 8px;
+            font-size: 13px;
+        }
+        .topic-dot {
+            width: 8px; height: 8px;
+            background: var(--primary-mid);
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+        .topic-text { line-height: 1.5; }
+        .topic-text strong { color: var(--primary); }
+
+        /* ── MODULE VIEW ── */
+        #module-page { display: none; }
+        #module-page.visible { display: block; }
+
+        .module-header {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px 18px;
+            margin-bottom: 12px;
+        }
+        .module-header-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .module-code-pill {
+            font-size: 10px;
+            font-weight: 800;
+            font-family: monospace;
+            color: var(--primary);
+            background: var(--primary-light);
+            padding: 2px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 6px;
+        }
+        .module-header h2 {
+            font-size: 18px;
+            font-weight: 800;
+            line-height: 1.25;
+        }
+        .module-header .sinhala-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        .studied-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1.5px solid var(--border);
+            background: var(--bg);
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all .2s;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+        .studied-btn:hover { border-color: var(--primary-mid); color: var(--primary); }
+        .studied-btn.done {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+        .studied-btn .check-icon { display: none; }
+        .studied-btn.done .check-icon { display: block; }
+        .studied-btn .uncheck-icon { display: block; }
+        .studied-btn.done .uncheck-icon { display: none; }
+
+        /* ── VOCAB TERMS ── */
+        .vocab-term {
+            border-bottom: 1.5px dashed var(--primary-mid);
+            background: rgba(16,185,129,.07);
+            padding: 0 2px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .15s;
+            border-radius: 2px;
+        }
+        .vocab-term:hover { background: rgba(16,185,129,.15); }
+
+        /* ── BILINGUAL DRAWER ── */
+        #vocab-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.3);
+            z-index: 200;
+            backdrop-filter: blur(2px);
+        }
+        #vocab-backdrop.open { display: block; }
+
+        #vocab-drawer {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            border-radius: 18px 18px 0 0;
+            padding: 20px 20px 32px;
+            z-index: 201;
+            transform: translateY(100%);
+            transition: transform .3s cubic-bezier(.4,0,.2,1);
+            max-width: 540px;
+            margin: 0 auto;
+            box-shadow: 0 -8px 32px rgba(0,0,0,.15);
+        }
+        #vocab-drawer.open { transform: translateY(0); }
+
+        .drawer-handle {
+            width: 36px;
+            height: 4px;
+            background: var(--border);
+            border-radius: 999px;
+            margin: 0 auto 16px;
+        }
+        .drawer-english {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 10px;
+        }
+        .drawer-sinhala {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        .drawer-def {
+            font-size: 13px;
+            color: #374151;
+            line-height: 1.7;
+            padding-top: 10px;
+            border-top: 1px solid var(--border);
+        }
+        .drawer-close-btn {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            background: var(--bg);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        /* ── MOBILE SIDEBAR OVERLAY ── */
+        #sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.4);
+            z-index: 150;
+        }
+        #sidebar-overlay.open { display: block; }
+
+        /* ── MOBILE BOTTOM NAV ── */
+        #bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+            z-index: 100;
+            gap: 2px;
+        }
+        .bnav-btn {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            padding: 5px 4px;
+            border: none;
+            background: none;
+            font-family: inherit;
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--text-soft);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: color .15s;
+        }
+        .bnav-btn.active { color: var(--primary); }
+        .bnav-btn svg { display: block; }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 767px) {
+            :root { --header-h: 54px; }
+
+            #menu-btn { display: flex; align-items: center; justify-content: center; }
+
+            #sidebar {
+                position: fixed;
+                top: 0; left: 0;
+                height: 100vh;
+                width: 80vw;
+                max-width: 300px;
+                z-index: 160;
+                transform: translateX(-100%);
+                transition: transform .3s cubic-bezier(.4,0,.2,1);
+                padding-top: calc(var(--header-h) + 8px);
+                box-shadow: 4px 0 20px rgba(0,0,0,.1);
+            }
+            #sidebar.open { transform: translateX(0); }
+
+            #layout { flex-direction: column; }
+            #main-area { padding: 12px 10px 80px; }
+
+            #bottom-nav { display: flex; }
+
+            .home-hero h2 { font-size: 18px; }
+            .modules-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
+            .home-stats { gap: 6px; }
+            .stat-number { font-size: 22px; }
+
+            .module-header h2 { font-size: 15px; }
+            .card-body { font-size: 13px; }
+
+            .lens-btn { padding: 5px 8px; font-size: 10px; }
+        }
+
+        @media (max-width: 380px) {
+            .header-title { font-size: 12px; }
+            .modules-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ── UTILS ── */
+        .section-divider {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: var(--text-soft);
+            margin: 16px 0 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .traps-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: #92400e;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header id="app-header">
+        <button id="menu-btn" onclick="toggleSidebar()" aria-label="Menu">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+        </button>
+        <div class="header-title-block">
+            <span class="header-badge">UOC · BBA Sem I</span>
+            <div class="header-title">ACT 130101: Financial Accounting</div>
+        </div>
+        <div class="lens-switcher">
+            <button class="lens-btn active" id="lens-summary" onclick="setLens('summary')">සරලවම</button>
+            <button class="lens-btn" id="lens-audit" onclick="setLens('audit')">විස්තර</button>
+        </div>
+    </header>
+
+    <div id="layout">
+        <!-- SIDEBAR -->
+        <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
+        <nav id="sidebar">
+            <div class="sidebar-label">Modules</div>
+            <div id="nav-list"></div>
+        </nav>
+
+        <!-- MAIN -->
+        <main id="main-area">
+            <!-- HOME PAGE -->
+            <div id="home-page">
+                <div class="home-hero">
+                    <span class="home-hero-badge">Financial Accounting · ACT 130101</span>
+                    <h2>BBA Semester I<br>Study Dashboard</h2>
+                    <p>University of Colombo · 11 LKAS/SLFRS Modules · Interactive Sinhala translations</p>
+                </div>
+
+                <div class="home-stats">
+                    <div class="stat-box">
+                        <div class="stat-number">11</div>
+                        <div class="stat-label">Modules</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="home-done-count">0</div>
+                        <div class="stat-label">Studied</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">22+</div>
+                        <div class="stat-label">Exam Traps</div>
+                    </div>
+                </div>
+
+                <div class="progress-section">
+                    <h3>Your Progress</h3>
+                    <div class="progress-bar-wrap">
+                        <div class="progress-bar-fill" id="home-progress-bar" style="width:0%"></div>
+                    </div>
+                    <div class="progress-text" id="home-progress-text">0 of 11 modules completed</div>
+                </div>
+
+                <div class="section-divider">Course Overview</div>
+
+                <div class="key-topics">
+                    <h3>What This Course Covers</h3>
+                    <div class="topic-list">
+                        <div class="topic-item">
+                            <div class="topic-dot"></div>
+                            <div class="topic-text"><strong>Conceptual Framework</strong> — ගිණුම්කරණ ප්‍රකාශන සකස් කිරීමේ මූලික සිද්ධාන්ත සහ රාමුව. Assets, Liabilities, Equity, Income, Expenses නිර්වචනය කිරීම.</div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="topic-dot"></div>
+                            <div class="topic-text"><strong>Financial Statements (LKAS 01, 07)</strong> — Balance Sheet, Income Statement, Cash Flow Statement ඉදිරිපත් කිරීමේ රීති. Direct vs Indirect Method.</div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="topic-dot"></div>
+                            <div class="topic-text"><strong>Assets Accounting (LKAS 16, 38)</strong> — ස්ථාවර වත්කම් (PPE) සහ අදෘශ්‍යමාන වත්කම් (Intangibles) ගිණුම්ගත කිරීම, ක්ෂය කිරීම (Depreciation/Amortization).</div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="topic-dot"></div>
+                            <div class="topic-text"><strong>Provisions & Contingencies (LKAS 37)</strong> — ප්‍රතිපාදන, අහඹු වගකීම් සහ අහඹු වත්කම් හඳුනාගෙන ශේෂ පත්‍රයේ දැක්වීම.</div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="topic-dot"></div>
+                            <div class="topic-text"><strong>Revenue & Inventories (SLFRS 15, LKAS 02)</strong> — 5-Step Revenue Model. Lower of Cost and NRV රීතිය. FIFO සහ WAC ක්‍රම.</div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="topic-dot"></div>
+                            <div class="topic-text"><strong>Employee Benefits (LKAS 19)</strong> — Defined Contribution vs Defined Benefit Plans. OCI හරහා Actuarial Gains/Losses.</div>
+                        </div>
+                        <div class="topic-item">
+                            <div class="topic-dot"></div>
+                            <div class="topic-text"><strong>Policies, Estimates & Events (LKAS 08, 10)</strong> — Retrospective vs Prospective ගලපීම්. Adjusting vs Non-Adjusting Events.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-divider">All Modules</div>
+                <div class="modules-grid" id="home-modules-grid"></div>
+            </div>
+
+            <!-- MODULE PAGE -->
+            <div id="module-page">
+                <div class="module-header">
+                    <div class="module-header-top">
+                        <div>
+                            <span class="module-code-pill" id="mod-code-label"></span>
+                            <h2 id="mod-title"></h2>
+                            <div class="sinhala-sub" id="mod-sinhala-title"></div>
+                        </div>
+                        <button class="studied-btn" id="studied-toggle-btn" onclick="toggleStudied()">
+                            <svg class="check-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                            <svg class="uncheck-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/></svg>
+                            <span id="studied-btn-label">Mark Studied</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="module-content"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- BOTTOM NAV (mobile) -->
+    <nav id="bottom-nav">
+        <button class="bnav-btn active" id="bnav-home" onclick="showHome()">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline stroke-linecap="round" stroke-linejoin="round" points="9 22 9 12 15 12 15 22"/></svg>
+            Home
+        </button>
+        <button class="bnav-btn" id="bnav-modules" onclick="showModulesPanel()">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            Modules
+        </button>
+        <button class="bnav-btn" id="bnav-summary" onclick="setLens('summary'); if(currentPage==='module') renderModuleContent();">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            සරලවම
+        </button>
+        <button class="bnav-btn" id="bnav-audit" onclick="setLens('audit'); if(currentPage==='module') renderModuleContent();">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            විස්තර
+        </button>
+    </nav>
+
+    <!-- VOCAB DRAWER -->
+    <div id="vocab-backdrop" onclick="closeVocabDrawer()"></div>
+    <div id="vocab-drawer">
+        <div class="drawer-handle"></div>
+        <button class="drawer-close-btn" onclick="closeVocabDrawer()">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+        <div class="drawer-english" id="vd-english"></div>
+        <div class="drawer-sinhala" id="vd-sinhala"></div>
+        <div class="drawer-def" id="vd-def"></div>
+    </div>
+
+    <script>
+    // ── VOCABULARY REGISTRY ──
+    const vocab = {
+        "Conceptual Framework": { sinhala: "සංකල්පීය රාමුව", def: "ගිණුම්කරණ ප්‍රමිතීන් සහ වාර්තාකරණය ගොඩනැගෙන මූලික නීති සහ සිද්ධාන්ත පද්ධතියයි." },
+        "Historical Cost": { sinhala: "ඓතිහාසික පිරිවැය", def: "යම් වත්කමක් මුලින්ම මිලදී ගත් අවස්ථාවේදී ඒ වෙනුවෙන් ගෙවන ලද නියමිත මුදල් අගයයි." },
+        "Fair Value": { sinhala: "සාධාරණ අගය", def: "වත්මන් වෙළඳපොල තත්ත්වයන් යටතේ වත්කමක් විකිණීමේදී ලැබෙන හෝ වගකීමක් පියවීමේදී ගෙවිය යුතු නියම මිල." },
+        "Value in Use": { sinhala: "භාවිතයේ පවතින අගය", def: "වත්කමක් දිගටම භාවිත කිරීමෙන් සහ අනාගතයේදී එය විකිණීමෙන් ආයතනයට ලැබෙනු ඇතැයි අපේක්ෂිත මුදල් ප්‍රවාහයන්ගේ වර්තමාන අගය." },
+        "Fulfilment Value": { sinhala: "ඉටුකිරීමේ අගය", def: "ආයතනයක් විසින් සිය වගකීමක් සම්පූර්ණයෙන්ම පියවා නිම කිරීම සඳහා ගෙවීමට සිදුවනු ඇතැයි අපේක්ෂා කරන මුදල්වල වර්තමාන අගය." },
+        "Capital Maintenance": { sinhala: "ප්‍රාග්ධන නඩත්තුව", def: "ආයතනයක ලාභය ගණනය කළ යුත්තේ ආරම්භක ප්‍රාග්ධනය සම්පූර්ණයෙන්ම ආරක්ෂා කර ගැනීමෙන් පසුව පමණක් යන සංකල්පයයි." },
+        "Statement of Financial Position": { sinhala: "මූල්‍ය තත්ත්ව ප්‍රකාශය (ශේෂ පත්‍රය)", def: "ස්ථාවර දිනයකට ආයතනයේ වත්කම් (Assets), වගකීම් (Liabilities) සහ හිමිකම් (Equity) පෙන්වන ප්‍රකාශය." },
+        "Other Comprehensive Income": { sinhala: "වෙනත් සමස්ත ආදායම (OCI)", def: "සාමාන්‍ය ලාභ අලාභ ගිණුමට ඇතුළත් නොකරන, ප්‍රතිමූල්‍යකරණ අතිරික්ත වැනි වෙනත් ප්‍රාග්ධන ලාභ/අලාභ ඇතුළත් කොටස." },
+        "Operating Activities": { sinhala: "මෙහෙයුම් ක්‍රියාකාරකම්", def: "ආයතනයක ප්‍රධානතම ආදායම් උපදවන දෛනික ව්‍යාපාරික කටයුතු (උදා: බඩු විකිණීම, වැටුප් ගෙවීම)." },
+        "Investing Activities": { sinhala: "ආයෝජන ක්‍රියාකාරකම්", def: "දිගුකාලීන වත්කම් මිලදී ගැනීම් සහ විකිණීම්වලට අදාළ මුදල් ගලනයන් (උදා: ස්ථාවර වත්කම් මිලදී ගැනීම)." },
+        "Financing Activities": { sinhala: "මූල්‍යකරණ ක්‍රියාකාරකම්", def: "ආයතනයේ ප්‍රාග්ධන ව්‍යුහය හෝ ණය ප්‍රමාණය වෙනස් වන ක්‍රියාකාරකම් (උදා: කොටස් නිකුතුව, බැංකු ණය ලබාගැනීම, ලාභාංශ ගෙවීම)." },
+        "Indirect Method": { sinhala: "වක්‍ර ක්‍රමය", def: "බදු පෙර ලාභය (Profit Before Tax), මුදල් නොවන වියදම් (Depreciation) සහ ජංගම වත්කම්/වගකීම් වෙනස්වීම් භාවිත කරමින් මෙහෙයුම් මුදල් ප්‍රවාහය සකසන ක්‍රමය." },
+        "Property, Plant and Equipment": { sinhala: "දේපළ, පිරවැය හා උපකරණ (ස්ථාවර වත්කම්)", def: "නිෂ්පාදන හෝ පරිපාලන කටයුතු සඳහා වසරකට වඩා වැඩි කාලයක් භාවිත කිරීමට තබා ගන්නා දෘශ්‍ය වත්කම්." },
+        "Revaluation Model": { sinhala: "ප්‍රතිමූල්‍යකරණ ආකෘතිය", def: "වත්කමක් එහි සාධාරණ අගයෙන් (Fair Value), පසුකාලීන ක්ෂයවීම් අඩුකර වාර්තා කිරීමේ ක්‍රමවේදය." },
+        "Provisions": { sinhala: "ප්‍රතිපාදන", def: "ගෙවිය යුතු දිනය හෝ නිවැරදිම මුදල් අගය ස්ථිරවම ප්‍රකාශ කළ නොහැකි, නීතිමය හෝ උපකල්පිත වගකීමක් වෙනුවෙන් වෙන් කරන මුදල්." },
+        "Contingent Liabilities": { sinhala: "අහඹු වගකීම්", def: "අනාගතයේ සිදුවන අවිනිශ්චිත සිදුවීමක් මත පදනම්ව මතු විය හැකි, දැනට ශේෂ පත්‍රයේ වගකීමක් ලෙස දැක්විය නොහැකි විභවතාවන්." },
+        "Onerous Contracts": { sinhala: "බරපතල/පාඩු ලබන ගිවිසුම්", def: "ගිවිසුමක් ඉටු කිරීමට යන අනිවාර්ය පිරිවැය, එමගින් ලැබෙන ආර්ථික වාසිවලට වඩා වැඩි වන අවස්ථාවන්." },
+        "Intangible Assets": { sinhala: "අදෘශ්‍යමාන වත්කම්", def: "භෞතික ස්වරූපයක් නොමැති එහෙත් හඳුනාගත හැකි, අනාගත ආර්ථික වාසි ගෙන දෙන වත්කම් (උදා: Software, Patents, Goodwill)." },
+        "Amortization": { sinhala: "අමෝර්තීකරණය", def: "නිශ්චිත ජීව කාලයක් සහිත අදෘශ්‍යමාන වත්කමක පිරිවැය එහි ප්‍රයෝජනවත් කාලය පුරා ක්‍රමවත්ව වියදම් ලෙස වෙන් කිරීම." },
+        "Adjusting Events": { sinhala: "ගැලපීම් සිදුකළ යුතු සිදුවීම්", def: "වාර්තාකරණ දිනය (Year-end) වන විටත් පැවති තත්ත්වයන් තහවුරු කිරීම සඳහා, මූල්‍ය ප්‍රකාශ අනුමත කිරීමට පෙර සිදුවන සිදුවීම්." },
+        "Non-Adjusting Events": { sinhala: "ගැලපීම් නොකළ යුතු සිදුවීම්", def: "වාර්තාකරණ දිනයෙන් පසුව අලුතින්ම මතු වූ තත්ත්වයන් (මූල්‍ය ප්‍රකාශ වෙනස් නොකර Note එකක් පමණක් දැමිය යුතුය)." },
+        "Accounting Policies": { sinhala: "ගිණුම්කරණ ප්‍රතිපත්ති", def: "මූල්‍ය ප්‍රකාශන සකස් කිරීමට ආයතනය විසින් තෝරාගෙන අඛණ්ඩව භාවිත කරනු ලබන විශේෂිත මූලධර්ම සහ රීති." },
+        "Performance Obligation": { sinhala: "ඉටුකිරීමේ බැඳීම", def: "පාරිභෝගිකයෙකු සමඟ ඇති කරගත් ගිවිසුමක් යටතේ නිශ්චිත භාණ්ඩයක් හෝ සේවාවක් සැපයීමට ඇති එකඟතාව." },
+        "Net Realizable Value (NRV)": { sinhala: "ශුද්ධ සාක්ෂාත් කරගත හැකි අගය", def: "තොග විකිණීමට හැකි වෙතැයි ඇස්තමේන්තු කරන මිලෙන්, එය නිම කිරීමට සහ විකිණීමට යන වියදම් අඩු කළ පසු ලැබෙන ශුද්ධ අගය." },
+        "Defined Benefit Plans": { sinhala: "නියමිත ප්‍රතිලාභ සැලසුම්", def: "සේවකයා විශ්‍රාම ගිය පසු ගෙවිය යුතු මුදල නිශ්චිත සූත්‍රයකින් තීරණය වන බැවින්, ආයතනය විසින් දිගුකාලීන වගකීමක් භාරගන්නා ක්‍රමවේදය." },
+        "De-recognition": { sinhala: "ගිණුම් පොත්වලින් ඉවත් කිරීම", def: "වත්කමකින් ලැබෙන ආර්ථික වාසි අවසන් වූ විට හෝ එය විකුණා දැමූ විට මූල්‍ය ප්‍රකාශනවලින් සදහටම ඉවත් කිරීම." }
+    };
+
+    // ── MODULES DATA ──
+    const modules = [
+        {
+            code: "M01", title: "Introduction & Conceptual Framework", sinhalaTitle: "හැඳින්වීම සහ සංකල්පීය රාමුව",
+            summary: {
+                objective: "පිටස්තර පාර්ශවයන්ට තීරණ ගැනීමට උපකාරී වන පොදු අරමුණු සහිත මූල්‍ය ප්‍රකාශන සකස් කිරීමේ මූලික න්‍යායාත්මක අඩිතාලම සැපයීම.",
+                recognition: "කිසියම් අංගයක් (Asset/Liability) මූල්‍ය ප්‍රකාශනයට ඇතුළත් කරන්නේ (1) එය අර්ථදැක්වීමට ගැළපේ නම්, (2) අදාළතාවයෙන් (Relevance) යුක්ත නම් සහ (3) නිවැරදි නිරූපණයක් (Faithful representation) කළ හැකිනම් පමණි.",
+                measurement: "මූලික ආකෘති 2 කි: <b>Historical Cost</b> (මුල් පිරිවැය) සහ <b>Current Value</b> (වත්මන් අගයන් වන Fair Value, Value in Use, සහ Fulfilment Value).",
+                disclosure: "භාවිතා කළ මූල්‍ය මිනුම් පදනම් සහ <b>Capital Maintenance</b> (ප්‍රාග්ධන නඩත්තු) ප්‍රවේශයන් පිළිබඳ සවිස්තරාත්මක සටහන්."
+            },
+            audit: {
+                objective: "This framework guides the IASB/CA Sri Lanka in developing standards and helps preparers ensure consistent practices when no specific standard applies.",
+                recognition: "An element is recognized if it results in relevant information and a faithful representation. Elements include Assets (economic resource controlled), Liabilities (present obligation to transfer resource), and Equity.",
+                measurement: "Historical cost reflects the price of the transaction. Current value measurements include:<br>• <b>Fair Value:</b> Market-based exit price.<br>• <b>Value in Use:</b> Present value of cash flows via asset usage.<br>• <b>Fulfilment Value:</b> Present value of cash needed to settle a liability.",
+                disclosure: "Requires disclosure of the reporting entity boundaries, perspective of financial statements, and whether financial capital or physical capital maintenance concepts are applied."
+            },
+            traps: [
+                "Exam Trap: Capital Maintenance අනුව ලාභය කියන්නේ ප්‍රාග්ධනය රක්ෂණය වුණාට පස්සේ ඉතිරි වන කොටස විතරයි. මුල් ප්‍රාග්ධනය පියවෙන්න කලින් ලාභ වෙන් කරන්න බෑ!",
+                "Exam Trap: Conceptual Framework එක කියන්නේ එක නිශ්චිත Accounting Standard (LKAS) එකක් නෙවෙයි. Standard එකක් සහ Framework එකක් අතර ගැටුමක් ආවොත්, හැමවෙලේම දිනන්නේ Standard එකයි!"
+            ]
+        },
+        {
+            code: "M02", title: "LKAS 01 - Presentation of Financial Statements", sinhalaTitle: "LKAS 01 - මූල්‍ය ප්‍රකාශන ඉදිරිපත් කිරීම",
+            summary: {
+                objective: "ආයතනයේ පසුගිය වසරවල් සමඟ සහ වෙනත් සමාගම් සමඟ සැසඳිය හැකි (Comparability) මූල්‍ය ප්‍රකාශන කට්ටලයක් සැකසීමේ ව්‍යුහය තීරණය කිරීම.",
+                recognition: "සම්පූර්ණ මූල්‍ය ප්‍රකාශන කට්ටලයකට Statement of Financial Position, Statement of Profit or Loss and Other Comprehensive Income, Statement of Changes in Equity, Statement of Cash Flows, සහ Notes (ගිණුම් සටහන්) අනිවාර්යයෙන්ම ඇතුළත් විය යුතුය.",
+                measurement: "වත්කම් සහ වගකීම් ජංගම (Current < 12 මාස) සහ ජංගම නොවන (Non-Current > 12 මාස) ලෙස පැහැදිලිව වෙන්කර දැක්විය යුතුය. එකිනෙකට හිලව් කිරීම (Offsetting) තහනම්ය.",
+                disclosure: "Going Concern (අඛණ්ඩ පැවැත්ම) උපකල්පනය, සැලකිය යුතු Accounting Policies සහ කළමනාකාරීත්වයේ විනිශ්චයන් (Judgments)."
+            },
+            audit: {
+                objective: "Prescribes the basis for presentation of general-purpose financial statements to ensure comparability both with the entity's own statements of previous periods and with other entities.",
+                recognition: "A complete set of financial statements includes: SOFP, Statement of Profit or Loss and OCI, Statement of Changes in Equity, Statement of Cash Flows, and Notes containing summary of material policies.",
+                measurement: "Assets and liabilities must be classified as current if expected to be realized/settled within 12 months or within the normal operating cycle. Offsetting assets and liabilities, or income and expenses, is not permitted unless required by another standard.",
+                disclosure: "Must state compliance with SLFRSs, explicit assessment of the going concern assumption, and sources of estimation uncertainty."
+            },
+            traps: [
+                "Exam Trap: Revaluation Surplus (ප්‍රතිමූල්‍යකරණ අතිරික්තය) සාමාන්‍ය Profit or Loss එකට දාන්න එපා. ඒක අයිති වෙන්නේ OCI (Other Comprehensive Income) එකටයි!",
+                "Exam Trap: Proposed Dividends (යෝජිත ලාභාංශ) වසර අවසානයේදී වගකීමක් (Liability) ලෙස SOFP එකේ පෙන්වන්න බෑ. ඒවා Note එකක විතරක් පෙන්වන්න."
+            ]
+        },
+        {
+            code: "M03", title: "LKAS 07 - Statement of Cash Flows", sinhalaTitle: "LKAS 07 - මුදල් ප්‍රවාහ ප්‍රකාශය",
+            summary: {
+                objective: "ව්‍යාපාරයේ මුදල් සහ මුදල් සමාන දෑ (Cash & Cash Equivalents) උපයාගැනීමේ සහ භාවිත කිරීමේ හැකියාව වර්ගීකරණය කර පෙන්වීම.",
+                recognition: "සියලුම මුදල් චලනයන් ප්‍රධාන කොටස් 3 කට බෙදේ: <b>Operating Activities</b> (දෛනික මෙහෙයුම්), <b>Investing Activities</b> (ස්ථාවර වත්කම් මිලදී ගැනීම්/විකිණීම්), සහ <b>Financing Activities</b> (ණය සහ කොටස් අරමුදල්).",
+                measurement: "මෙහෙයුම් මුදල් ප්‍රවාහය ක්‍රම 2 කට හැදිය හැක: Direct Method (සෘජු ලැබීම් සහ ගෙවීම්) හෝ Indirect Method (ලාභය මුදල් නොවන අයිතමයන්ගෙන් ගැලපීම).",
+                disclosure: "මුදල් සහ මුදල් සමාන දෑවල සංරචක එකඟ කිරීම (Reconciliation) සහ ආයතනය සතු භාවිතයට ගත නොහැකි සීමාසහිත මුදල් ශේෂයන්."
+            },
+            audit: {
+                objective: "Requires information about the historical changes in cash and cash equivalents by means of a cash flow statement which classifies cash flows during the period from operating, investing, and financing activities.",
+                recognition: "• <b>Operating:</b> Core revenue-producing activities.<br>• <b>Investing:</b> Acquisition and disposal of long-term assets.<br>• <b>Financing:</b> Activities altering equity capital and borrowings.",
+                measurement: "Operating cash flows can be reported using either the Direct Method (major classes of gross cash receipts/payments disclosed) or Indirect Method (Profit or Loss adjusted for non-cash expenses like depreciation, changes in working capital).",
+                disclosure: "Must disclose the components of cash and cash equivalents and present a reconciliation with the amounts reported in the SOFP."
+            },
+            traps: [
+                "Exam Trap: Cash Equivalents වෙන්න නම් කෙටි කාලීන (මිලදී ගෙන මාස 3 ක් ඇතුළත කල් පිරෙන) සහ සුළු අගය වෙනස්වීමේ අවදානමක් තියෙන ඒවා වෙන්නම ඕනේ.",
+                "Exam Trap: Indirect Method එකේදී 'Increase in Inventory' කියන්නේ සල්ලි එළියට ගිය එකක් (Deduct), 'Increase in Creditors' කියන්නේ සල්ලි ඉතිරි වුණ එකක් (Add). මාරු කරගන්න එපා!"
+            ]
+        },
+        {
+            code: "M04", title: "LKAS 16 - Property, Plant and Equipment (PPE)", sinhalaTitle: "LKAS 16 - දේපළ, පිරවැය හා උපකරණ",
+            summary: {
+                objective: "භාණ්ඩ නිෂ්පාදනයට හෝ පරිපාලන කටයුතුවලට වසරකට වඩා වැඩි කාලයක් භාවිත කරන භෞතික වත්කම් ගිණුම්ගත කිරීම.",
+                recognition: "වත්කමක් ලෙස ගන්නේ (1) අනාගත ආර්ථික වාසි ලැබීම ස්ථිර නම් සහ (2) පිරිවැය නිවැරදිව මැනිය හැකි නම් පමණි.",
+                measurement: "<b>Initial:</b> Historical Cost එකට (මිල + සෘජු වියදම් + Dismantling/ඉවත් කිරීමේ පිරිවැය ඇස්තමේන්තුව) ගන්නවා. <b>Subsequent:</b> Cost Model හෝ Revaluation Model භාවිත කළ හැක.",
+                disclosure: "භාවිත කළ ක්ෂය ක්‍රම (Depreciation), ජීව කාලය (Useful lives), සහ ප්‍රතිමූල්‍යකරණ දිනයන්."
+            },
+            audit: {
+                objective: "Prescribes the accounting treatment for property, plant, and equipment so that users can discern information about an entity's investment in its PPE and changes in such investment.",
+                recognition: "Recognized as an asset if and only if: It is probable that future economic benefits associated with the item will flow to the entity, and the cost of the item can be measured reliably.",
+                measurement: "• <b>Initial:</b> Measured at cost including purchase price, import duties, directly attributable costs to bring the asset to its working location, and initial estimate of dismantling/restoring site costs.<br>• <b>Subsequent:</b> Choice between Cost Model or Revaluation Model.",
+                disclosure: "Measurement bases, depreciation methods, useful lives, gross carrying amount, accumulated depreciation, and full reconciliation of movements."
+            },
+            traps: [
+                "Exam Trap: වත්කම වැඩ කරන තත්ත්වයට ගෙනාවට පස්සේ සිදුවන Operating Losses (ආරම්භක පාඩු) හෝ Admin expenses වත්කමේ පිරිවැයට එකතු කරන්න සපුරා තහනම්!",
+                "Exam Trap: Revaluation Surplus එකක් ආවම ඒක OCI වල පෙන්වලා Equity වල Revaluation Reserve එකට දාන්න. හැබැයි කලින් වසරක Loss එකක් තිබ්බා නම්, Loss එක පියවෙනකම් මුලින්ම Profit or Loss එකට Income එකක් විදිහට දාන්න!"
+            ]
+        },
+        {
+            code: "M05", title: "LKAS 37 - Provisions, Contingent Liabilities & Assets", sinhalaTitle: "LKAS 37 - ප්‍රතිපාදන, අහඹු වගකීම් සහ අහඹු වත්කම්",
+            summary: {
+                objective: "අවිනිශ්චිත කාල පරාසයන් හෝ මුදල් අගයන් සහිත වගකීම් සහ වත්කම් නිසි පරිදි හඳුනාගෙන ශේෂ පත්‍රය විකෘති වීම වැළැක්වීම.",
+                recognition: "• <b>Provisions:</b> වගකීමක් පවතී නම්, මුදල් ගලායාම 50% කට වඩා (Probable) වැඩි නම් සහ අගය මැනිය හැකිනම් Balance sheet එකට ගන්න.<br>• <b>Contingent Liabilities:</b> මුදල් ගලායාමේ සම්භාවිතාව අඩු නම් (Possible) Note එකක විතරක් පෙන්වන්න. Remote (&lt;5%) නම් අමතක කරන්න.",
+                measurement: "අදාළ වගකීම පියවීමට වසර අවසානයේදී අවශ්‍ය වන හොඳම ඇස්තමේන්තුගත මුදල් අගය (Best Estimate) විය යුතුය.",
+                disclosure: "සෑම ප්‍රතිපාදන පන්තියකම ආරම්භක සහ අවසාන ශේෂයන්, අලුතින් එක් කළ මුදල් සහ භාවිත කළ අගයන්."
+            },
+            audit: {
+                objective: "Ensures that appropriate recognition criteria and measurement bases are applied to provisions, contingent liabilities, and contingent assets, with sufficient note disclosures.",
+                recognition: "• <b>Provision:</b> Present obligation (legal/constructive) from past event + probable outflow (&gt;50%) + reliable estimate.<br>• <b>Contingent Liability:</b> Possible obligation or present obligation where outflow is not probable or cannot be estimated reliably. Disclosed, not recognized.<br>• <b>Contingent Asset:</b> Possible asset from past events. Disclosed if inflow is probable.",
+                measurement: "The amount recognized as a provision shall be the best estimate of the expenditure required to settle the present obligation at the end of the reporting period, discounted to present value if material.",
+                disclosure: "Carrying amount at the beginning and end, additional provisions made, amounts used, unused amounts reversed, and brief description of the nature/timing of outflows."
+            },
+            traps: [
+                "Exam Trap: Onerous Contracts (පාඩු ලබන ගිවිසුම්) වලදී, ගිවිසුම ක්‍රියාත්මක කිරීමට යන අනිවාර්ය පිරිවැය සහ ගිවිසුම කඩ කිරීම නිසා ගෙවන්න වෙන දඩ මුදල යන දෙකෙන් අඩු අගය වෙනුවෙන් Provision එකක් තබන්න!",
+                "Exam Trap: Contingent Assets (අහඹු වත්කම්) කවදාවත් ශේෂ පත්‍රයේ Asset එකක් විදිහට ලියන්න බෑ. ඒවා ලියන්න පුළුවන් ඒ මුදල ලැබීම 100% ක්ම ස්ථිර (Virtually Certain) වුණොත් විතරයි."
+            ]
+        },
+        {
+            code: "M06", title: "LKAS 38 - Intangible Assets", sinhalaTitle: "LKAS 38 - අදෘශ්‍යමාන වත්කම්",
+            summary: {
+                objective: "භෞතික ස්වරූපයක් නොමැති, එහෙත් වෙන්කර හඳුනාගත හැකි (Identifiable) වත්කම්වල ගිණුම්කරණ ප්‍රතිපත්තිය තීරණය කිරීම.",
+                recognition: "වත්කම Separable (වෙන් කර විකිණිය හැකි) විය යුතුය, නැතහොත් නීතිමය අයිතියක් තිබිය යුතුය. අනාගත වාසි Probable විය යුතුය.",
+                measurement: "• <b>Research Phase:</b> සියලු වියදම් ඍජුවම Profit or Loss එකට (Expense).<br>• <b>Development Phase:</b> 'PIRATE' කොන්දේසි 6 ම සම්පූර්ණ නම් පමණක් Capitalize කර වත්කමකට ගන්න.",
+                disclosure: "සීමිත ජීව කාලය (Finite Life) නම් <b>Amortization</b> (ක්ෂය) කරන ක්‍රමය, අසීමිත ජීව කාලය (Indefinite Life) නම් වාර්ෂිකව කරන Impairment (අගය අඩුවීම්) පරීක්ෂාව."
+            },
+            audit: {
+                objective: "Prescribes the accounting treatment for intangible assets that are not dealt with specifically in another standard, requiring strict recognition rules.",
+                recognition: "An intangible asset must be identifiable (separable or arising from contractual/legal rights), controlled by the entity, and yield future economic benefits.",
+                measurement: "• <b>Research:</b> Expensed immediately.<br>• <b>Development:</b> Capitalized if PIRATE criteria met: Product technical feasibility, Intention to complete, Resource availability, Ability to use/sell, Tangible economic benefits, Expense measurement reliability.",
+                disclosure: "Useful lives, amortization rates, methods used, gross carrying amount, and accumulated amortization aligned with impairment losses."
+            },
+            traps: [
+                "Exam Trap: Internally generated Goodwill (ආයතනය ඇතුළතින්ම සාදාගත් කීර්ති නාමයන්), Brands, හෝ Customer lists කිසිම විටක වත්කම් ලෙස පොත්වල ලියන්න බෑ!",
+                "Exam Trap: Indefinite Life (අසීමිත කාලයක් පවතින) අදෘශ්‍යමාන වත්කම් ක්ෂය (Amortize) කරන්නේ නැහැ. ඒවා වසරකට සැරයක් අනිවාර්යයෙන්ම Impairment Test එකකට භාජනය කරන්න ඕනේ."
+            ]
+        },
+        {
+            code: "M07", title: "LKAS 10 - Events After the Reporting Period", sinhalaTitle: "LKAS 10 - වාර්තාකරණ කාලපරිච්ඡේදයෙන් පසු සිදුවන සිදුවීම්",
+            summary: {
+                objective: "වසර අවසාන දිනය (Reporting Date) සහ මූල්‍ය ප්‍රකාශන නිකුත් කිරීමට අධ්‍යක්ෂ මණ්ඩලය අනුමත කරන දිනය (Authorization Date) අතර සිදුවන සිදුවීම් ගලපන ආකාරය.",
+                recognition: "• <b>Adjusting Events:</b> වසර අවසාන දිනය වන විටත් පැවති තත්ත්වයන්ට සාක්ෂි සපයන සිදුවීම් (පොත්වල ගණන් වෙනස් කරන්න).<br>• <b>Non-Adjusting Events:</b> වසර අවසානයෙන් පසුව අලුතින්ම ඇතිවූ තත්ත්වයන් (ගණන් වෙනස් නොකර Note එකක් විතරක් දාන්න).",
+                measurement: "ගැලපීම් කළ යුතු සිදුවීමකදී, මූල්‍ය ප්‍රකාශනවල අදාළ වත්කම් හෝ වගකීම්වල අගයන් සෘජුවම සංශෝධනය කළ යුතුය.",
+                disclosure: "මූල්‍ය ප්‍රකාශන නිකුත් කිරීමට අනුමත කළ දිනය, අනුමැතිය දුන් පුද්ගලයා සහ ද්‍රව්‍යමය නොවන ගැලපීම් රහිත සිදුවීම්වල ස්වභාවය."
+            },
+            audit: {
+                objective: "Prescribes when an entity should adjust its financial statements for events after the reporting period, and the required disclosures.",
+                recognition: "• <b>Adjusting Events:</b> Provide evidence of conditions that existed at the end of the reporting period (e.g., bankruptcy of a customer after year-end confirming bad debt).<br>• <b>Non-Adjusting Events:</b> Indicative of conditions that arose after the reporting period (e.g., decline in market value of investments).",
+                measurement: "An entity shall adjust the amounts recognized in its financial statements to reflect adjusting events after the reporting period.",
+                disclosure: "Disclosure of authorization date for issue, and for material non-adjusting events: the nature of the event and an estimate of its financial effect."
+            },
+            traps: [
+                "Exam Trap: වසර අවසානයෙන් පස්සේ (උදා: පෙබරවාරි වල) සිදුවන ගින්නකින් මුළු තොගයම විනාශ වුණත්, ඒක Non-Adjusting Event එකක්. පොත්වල ගණන් වෙනස් කරන්න බෑ, Note එකක් විතරයි!",
+                "Exam Trap: හැබැයි, වසර අවසානයෙන් පස්සේ වෙන සිදුවීමක් නිසා ආයතනයේ පැවැත්ම සම්පූර්ණයෙන්ම නැතිවෙනවා නම් (Going concern assumption breaks), LKAS 10 අනුව මුළු පොතම historical cost එකෙන් අයින් කරලා Break-up value (NRV) එකට මාරු කරන්න ඕනේ! මේක විශේෂ අවස්ථාවක්."
+            ]
+        },
+        {
+            code: "M08", title: "LKAS 08 - Accounting Policies, Estimates and Errors", sinhalaTitle: "LKAS 08 - ගිණුම්කරණ ප්‍රතිපත්ති, ඇස්තමේන්තු වෙනස්වීම් සහ දෝෂ",
+            summary: {
+                objective: "Accounting Policies තෝරාගැනීම, ඒවායේ වෙනස්වීම් සහ පෙර වර්ෂයන්හි සිදුවූ වැරදි නිවැරදි කරන ආකාරය නියාමනය කිරීම.",
+                recognition: "• <b>Policy Change & Prior Errors:</b> Retrospective (අතීතයට බලපාන පරිදි මුල සිටම Comparative සංඛ්‍යා වෙනස් කරන්න).<br>• <b>Estimate Change:</b> Prospective (අනාගතයට පමණක් බලපාන පරිදි වත්මන් වසරේ සිට ඉදිරියට වෙනස් කරන්න).",
+                measurement: "ප්‍රතිපත්ති වෙනස් කිරීමකදී, ආරම්භක සංකේතවත් ඉතිරිවීම් (Opening Retained Earnings) වලට අතීත බලපෑම සම්පූර්ණයෙන්ම ගලපනු ලැබේ.",
+                disclosure: "වැරදිවල ස්වභාවය, එක් එක් පෙර කාලපරිච්ඡේදයට අදාළ නිවැරදි කිරීම්වල ප්‍රමාණය."
+            },
+            audit: {
+                objective: "Enhances the relevance, reliability, and comparability of financial statements by prescribing criteria for changing policies, estimates, and correcting errors.",
+                recognition: "• <b>Changes in Accounting Policies & Prior Period Errors:</b> Handled <b>Retrospectively</b> by restating comparatives.<br>• <b>Changes in Accounting Estimates:</b> Handled <b>Prospectively</b> by including it in profit or loss in the period of change and future periods.",
+                measurement: "Retrospective application requires adjusting the opening balance of each affected component of equity for the earliest prior period presented.",
+                disclosure: "The nature of policy changes or prior period errors, the amount of correction for each prior period line-item, and circumstances leading to impracticability if applicable."
+            },
+            traps: [
+                "Exam Trap: Stock Valuation එක FIFO ක්‍රමයෙන් Weighted Average (WAC) ක්‍රමයට මාරු කිරීම ප්‍රතිපත්ති වෙනස්වීමක් (Policy Change - Retrospective). හැබැයි මැෂින් එකක Depreciation rate එක 10% සිට 20% කිරීම ඇස්තමේන්තු වෙනස්වීමක් (Estimate Change - Prospective)!",
+                "Exam Trap: කලින් අවුරුද්දක ගණන් හිලව්වල අමතක වුණ විශාල වැරදක් (Material Error) හමුවුණොත් ඒක මේ අවුරුද්දේ වියදමක් කරන්න බෑ, කලින් අවුරුද්දේ තීරු (Comparative Columns) වෙනස් කරන්නම ඕනේ."
+            ]
+        },
+        {
+            code: "M09", title: "SLFRS 15 - Revenue from Contracts with Customers", sinhalaTitle: "SLFRS 15 - පාරිභෝගිකයන් සමඟ ඇති කරගන්නා ගිවිසුම්වලින් ලැබෙන ආදායම",
+            summary: {
+                objective: "භාණ්ඩ හෝ සේවාවල පාලනය (Control) පාරිභෝගිකයාට පැවරෙන අවස්ථාවේදී නිවැරදිම ආදායම් ප්‍රමාණය හඳුනාගැනීම සඳහා තනි ඒකාබද්ධ ආකෘතියක් සැපයීම.",
+                recognition: "පියවර 5 ක මූලධර්මය (5-Step Model) අනුගමනය කරන්න: (1) Contract එක හඳුනාගැනීම, (2) Performance Obligation වෙන් කිරීම, (3) Price එක තීරණය කිරීම, (4) Price එක බැඳීම්වලට බෙදීම, (5) බැඳීම් ඉටු කළ පසු Revenue ලියාගැනීම.",
+                measurement: "පාරිභෝගිකයාගෙන් ලැබීමට අපේක්ෂා කරන, වට්ටම් සහ ප්‍රතිලාභ අඩුකළ පසු ලැබෙන සාධාරණ ප්‍රතිපූරණ මුදල (Transaction Price).",
+                disclosure: "ගිවිසුම්වලින් ලැබෙන ආදායම් කාණ්ඩ (Categories), Contract Assets සහ Contract Liabilities ශේෂයන්."
+            },
+            audit: {
+                objective: "Establishes principles to report useful information about the nature, amount, timing, and uncertainty of revenue and cash flows arising from a contract with a customer.",
+                recognition: "Enforces the Core 5-Step Model:<br>1. Identify the contract with a customer.<br>2. Identify the performance obligations in the contract.<br>3. Determine the transaction price.<br>4. Allocate the transaction price to the performance obligations.<br>5. Recognize revenue when (or as) the entity satisfies a performance obligation.",
+                measurement: "Revenue is measured based on the consideration specified in a contract with a customer, excluding amounts collected on behalf of third parties (e.g., sales taxes).",
+                disclosure: "Disaggregation of revenue from contracts with customers, performance obligations detail, and asset/liability balances arising from contracts."
+            },
+            traps: [
+                "Exam Trap: පාරිභෝගිකයා සල්ලි කලින්ම දුන්නත් (Advance Payment), භාණ්ඩවල අයිතිය/පාලනය (Control) එයාට ලැබෙනකම් ආදායම (Revenue) ලියාගන්න බෑ. ඒක Contract Liability එකක් විදිහට තියාගන්න!",
+                "Exam Trap: ගිවිසුමක් ලබාගැනීමට යන Sales Commissions වැනි සෘජු වියදම් (Costs to obtain a contract) Capitalize කරලා පසුව Amortize කරන්න පුළුවන්."
+            ]
+        },
+        {
+            code: "M10", title: "LKAS 02 - Inventories", sinhalaTitle: "LKAS 02 - තොග පිරිවැය",
+            summary: {
+                objective: "ව්‍යාපාරයේ විකිණීමට තබා ඇති තොගවල පිරිවැය මැනීම සහ එය වත්කමක් ලෙස පෙන්වන උපරිම සීමාවන් නියම කිරීම.",
+                recognition: "තොග අගය කළ යුත්තේ <b>Lower of Cost and Net Realizable Value (NRV)</b> යන රීතියට අනුවය. (පිරිවැය සහ ශුද්ධ සාක්ෂාත් කරගත හැකි අගය යන දෙකෙන් අඩු අගය).",
+                measurement: "පිරිවැයට මිලදී ගත් මිල, ප්‍රවාහන වියදම් සහ නිෂ්පාදන වියදම් ඇතුළත් වේ. FIFO හෝ Weighted Average (WAC) සූත්‍ර භාවිතා කළ හැක.",
+                disclosure: "තොග මැනීමට ගත් ප්‍රතිපත්ති, මුළු තොගයේ වටිනාකම (Sub-classifications) සහ වසර තුළ Expense (Cost of Sales) ලෙස ලියූ තොග අගය."
+            },
+            audit: {
+                objective: "Prescribes the accounting treatment for inventories, providing practical guidance on determining cost and its subsequent recognition as an expense.",
+                recognition: "Inventories shall be measured at the <b>lower of cost and net realizable value (NRV)</b>.",
+                measurement: "• Cost comprises all costs of purchase, costs of conversion, and other costs incurred in bringing the inventories to their present location and condition (FIFO or WAC used).<br>• NRV is the estimated selling price in the ordinary course of business less estimated costs of completion and selling expenses.",
+                disclosure: "Accounting policies adopted, total carrying amount classified appropriately (raw materials, WIP, finished goods), inventory write-downs recognized as expense, and reversals."
+            },
+            traps: [
+                "Exam Trap: නිමි භාණ්ඩ ගබඩා කර තැබීමේ වියදම් (Storage costs of finished goods) සහ අසාමාන්‍ය නාස්තීන් (Abnormal wastage) කවදාවත් Cost එකට එකතු කරන්න බෑ! ඒවා කෙලින්ම P&L වියදම්.",
+                "Exam Trap: තොග අගය අඩු කිරීමක් (Write-down to NRV) කළ පසු, වෙළඳපොල මිල නැවත වැඩි වුණොත්, උපරිමව කලින් අඩු කරපු ගාණට විතරක් (Reversal) නැවත වැඩි කරන්න පුළුවන්."
+            ]
+        },
+        {
+            code: "M11", title: "LKAS 19 - Employee Benefits", sinhalaTitle: "LKAS 19 - සේවක ප්‍රතිලාභ",
+            summary: {
+                objective: "සේවකයන් සපයන සේවාවන් වෙනුවෙන් ආයතනය විසින් ගෙවීමට ඇති සියලුම ආකාරයේ ප්‍රතිලාභ හඳුනාගැනීම සහ ප්‍රකාශ කිරීම.",
+                recognition: "• <b>Short-Term:</b> මාස 12 ක් ඇතුළත පියවන වැටුප් සහ නිවාඩු (සේවය දෙනවිටම Expense එකක් කරන්න).<br>• <b>Post-Employment:</b> Defined Contribution (සරලයි, දායක මුදල විතරයි වියදම) සහ <b>Defined Benefit Plans</b> (සංකීර්ණයි, Actuarial ගණනය කිරීම් මත SOFP එකේ වගකීමක් තබන්න).",
+                measurement: "දිගුකාලීන වගකීම් පියවීමට අවශ්‍ය වන මුදල වර්තමාන අගයට (Present Value) වට්ටම් කර (Discount) මැනිය යුතුය.",
+                disclosure: "Defined Benefit සැලසුම්වල වත්කම් සහ වගකීම්වල චලනයන්, සහ OCI එකට දැමූ Actuarial Gains/Losses."
+            },
+            audit: {
+                objective: "Prescribes the accounting and disclosure for employee benefits, requiring an entity to recognize a liability when an employee provides service in exchange for future benefits.",
+                recognition: "• <b>Short-Term:</b> Recognized as expense when service is rendered.<br>• <b>Defined Contribution Plans:</b> Entity pays fixed contributions into a separate fund; expense recognized matching the service period.<br>• <b>Defined Benefit Plans:</b> Net liability/asset recognized in SOFP. Actuarial gains and losses recognized in OCI.",
+                measurement: "Defined benefit obligations are measured using the Projected Unit Credit Method, discounting projected future cash outflows using high-quality corporate bond yields.",
+                disclosure: "Detailed reconciliation of opening/closing balances of the present value of the defined benefit obligation and fair value of plan assets."
+            },
+            traps: [
+                "Exam Trap: Defined Benefit Plans වලදී සිදුවන Actuarial Gains or Losses (ඇස්තමේන්තු වැරදීම් නිසා සිදුවන ලාභ/පාඩු) සාමාන්‍ය Profit or Loss එකට දාන්න බෑ. ඒවා OCI (Other Comprehensive Income) එකටම දාන්න ඕනේ!",
+                "Exam Trap: Termination Benefits (සේවයෙන් අයින් කිරීමේ වන්දි) වියදමක් ලෙස ලියන්නේ සේවකයා අයින් කරන යෝජනාව සමාගමට නැවත අකුලාගත නොහැකි (Irrevocable) මට්ටමට පත්වුණාම විතරයි."
+            ]
+        }
+    ];
+
+    // ── STATE ──
+    let currentModuleIndex = 0;
+    let activeLens = 'summary';
+    let currentPage = 'home'; // 'home' | 'module'
+    let studiedSet = new Set();
+
+    // ── INIT ──
+    (function init() {
+        // Clear localStorage as requested
+        localStorage.clear();
+        // Load studied from sessionStorage only (fresh each session but persists during use)
+        try {
+            const saved = sessionStorage.getItem('studied');
+            if (saved) studiedSet = new Set(JSON.parse(saved));
+        } catch(e) {}
+
+        buildNavList();
+        renderHomePage();
+        showHome();
+    })();
+
+    function saveStudied() {
+        try { sessionStorage.setItem('studied', JSON.stringify([...studiedSet])); } catch(e) {}
+    }
+
+    // ── NAV ──
+    function buildNavList() {
+        const list = document.getElementById('nav-list');
+        list.innerHTML = '';
+
+        // Home button in sidebar
+        const homeBtn = document.createElement('button');
+        homeBtn.className = 'nav-pill' + (currentPage === 'home' ? ' active' : '');
+        homeBtn.id = 'nav-home-btn';
+        homeBtn.onclick = showHome;
+        homeBtn.innerHTML = `
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+            <span class="pill-title">🏠 Home</span>`;
+        list.appendChild(homeBtn);
+
+        modules.forEach((mod, i) => {
+            const btn = document.createElement('button');
+            btn.id = `nav-pill-${i}`;
+            btn.className = 'nav-pill' + (currentPage === 'module' && i === currentModuleIndex ? ' active' : '');
+            btn.onclick = () => loadModule(i);
+            const isDone = studiedSet.has(i);
+            btn.innerHTML = `
+                <span class="pill-code">${mod.code}</span>
+                <span class="pill-title">${mod.title}</span>
+                <span class="pill-check ${isDone ? 'done' : ''}">
+                    <svg width="10" height="10" fill="none" stroke="${isDone ? (btn.classList.contains('active') ? '#065f46' : 'white') : 'transparent'}" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </span>`;
+            list.appendChild(btn);
+        });
+    }
+
+    function updateNavHighlight() {
+        // Update home button
+        const homeBtn = document.getElementById('nav-home-btn');
+        if (homeBtn) homeBtn.className = 'nav-pill' + (currentPage === 'home' ? ' active' : '');
+        modules.forEach((_, i) => {
+            const btn = document.getElementById(`nav-pill-${i}`);
+            if (!btn) return;
+            const isDone = studiedSet.has(i);
+            btn.className = 'nav-pill' + (currentPage === 'module' && i === currentModuleIndex ? ' active' : '');
+            const checkEl = btn.querySelector('.pill-check');
+            if (checkEl) {
+                checkEl.className = 'pill-check' + (isDone ? ' done' : '');
+                const svgEl = checkEl.querySelector('svg');
+                if (svgEl) {
+                    const isActive = currentPage === 'module' && i === currentModuleIndex;
+                    svgEl.setAttribute('stroke', isDone ? (isActive ? '#065f46' : 'white') : 'transparent');
+                }
+            }
+        });
+    }
+
+    // ── SIDEBAR TOGGLE ──
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('open');
+    }
+
+    // ── LENS ──
+    function setLens(lens) {
+        activeLens = lens;
+        document.getElementById('lens-summary').className = 'lens-btn' + (lens === 'summary' ? ' active' : '');
+        document.getElementById('lens-audit').className = 'lens-btn' + (lens === 'audit' ? ' active' : '');
+        // Update bottom nav visual
+        document.getElementById('bnav-summary').className = 'bnav-btn' + (lens === 'summary' ? ' active' : '');
+        document.getElementById('bnav-audit').className = 'bnav-btn' + (lens === 'audit' ? ' active' : '');
+        if (currentPage === 'module') renderModuleContent();
+    }
+
+    // ── HOME ──
+    function showHome() {
+        currentPage = 'home';
+        document.getElementById('home-page').className = 'visible';
+        document.getElementById('module-page').className = '';
+        document.getElementById('bnav-home').className = 'bnav-btn active';
+        document.getElementById('bnav-modules').className = 'bnav-btn';
+        updateNavHighlight();
+        renderHomePage();
+        // Close sidebar on mobile
+        if (window.innerWidth < 768) {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebar-overlay').classList.remove('open');
+        }
+        window.scrollTo(0, 0);
+    }
+
+    function showModulesPanel() {
+        document.getElementById('bnav-modules').className = 'bnav-btn active';
+        document.getElementById('bnav-home').className = 'bnav-btn';
+        toggleSidebar();
+    }
+
+    function renderHomePage() {
+        const done = studiedSet.size;
+        const pct = Math.round(done / modules.length * 100);
+        document.getElementById('home-done-count').textContent = done;
+        document.getElementById('home-progress-bar').style.width = pct + '%';
+        document.getElementById('home-progress-text').textContent = `${done} of ${modules.length} modules completed`;
+
+        // Modules grid
+        const grid = document.getElementById('home-modules-grid');
+        grid.innerHTML = '';
+        modules.forEach((mod, i) => {
+            const isDone = studiedSet.has(i);
+            const card = document.createElement('div');
+            card.className = 'module-card' + (isDone ? ' completed' : '');
+            card.onclick = () => loadModule(i);
+            card.innerHTML = `
+                <div class="mc-code">${mod.code}</div>
+                <div class="mc-title">${mod.title}</div>
+                <div class="mc-sinhala">${mod.sinhalaTitle}</div>
+                <div class="mc-done-badge">
+                    <svg width="11" height="11" fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>`;
+            grid.appendChild(card);
+        });
+    }
+
+    // ── MODULE ──
+    function loadModule(index) {
+        currentPage = 'module';
+        currentModuleIndex = index;
+        document.getElementById('home-page').className = '';
+        document.getElementById('module-page').className = 'visible';
+        document.getElementById('bnav-home').className = 'bnav-btn';
+        document.getElementById('bnav-modules').className = 'bnav-btn';
+        updateNavHighlight();
+        renderModuleContent();
+        // Close sidebar on mobile
+        if (window.innerWidth < 768) {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebar-overlay').classList.remove('open');
+        }
+        window.scrollTo(0, 0);
+    }
+
+    function renderModuleContent() {
+        const mod = modules[currentModuleIndex];
+        const isDone = studiedSet.has(currentModuleIndex);
+
+        document.getElementById('mod-code-label').textContent = mod.code;
+        document.getElementById('mod-title').textContent = mod.title;
+        document.getElementById('mod-sinhala-title').textContent = mod.sinhalaTitle;
+
+        const toggleBtn = document.getElementById('studied-toggle-btn');
+        toggleBtn.className = 'studied-btn' + (isDone ? ' done' : '');
+        document.getElementById('studied-btn-label').textContent = isDone ? 'Studied ✓' : 'Mark Studied';
+
+        const content = activeLens === 'summary' ? mod.summary : mod.audit;
+        const lensLabel = activeLens === 'summary' ? 'High-Yield Summary' : 'Deep Audit Syllabus Specifications';
+
+        let html = `
+            <div class="content-card">
+                <div class="card-label">Core Objective & Scope</div>
+                <div class="card-body">${processVocab(content.objective)}</div>
+            </div>
+            <div class="content-card">
+                <div class="card-label">Recognition Criteria</div>
+                <div class="card-body">${processVocab(content.recognition)}</div>
+            </div>
+            <div class="content-card">
+                <div class="card-label">Measurement Rules</div>
+                <div class="card-body">${processVocab(content.measurement)}</div>
+            </div>
+            <div class="content-card">
+                <div class="card-label">Key Disclosures</div>
+                <div class="card-body">${processVocab(content.disclosure)}</div>
+            </div>
+
+            <div class="section-divider">Exam Traps</div>
+            <div class="traps-header">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                High-Yield Exam Traps (වැරදෙන්න පුළුවන් තැන්)
+            </div>`;
+
+        mod.traps.forEach(trap => {
+            html += `<div class="trap-card">${processVocab(trap)}</div>`;
+        });
+
+        // Module navigation
+        const hasPrev = currentModuleIndex > 0;
+        const hasNext = currentModuleIndex < modules.length - 1;
+        html += `
+            <div style="display:flex;gap:8px;margin-top:20px;">
+                ${hasPrev ? `<button onclick="loadModule(${currentModuleIndex-1})" style="flex:1;padding:11px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-muted);">← ${modules[currentModuleIndex-1].code}</button>` : '<div style="flex:1"></div>'}
+                ${hasNext ? `<button onclick="loadModule(${currentModuleIndex+1})" style="flex:1;padding:11px;border-radius:8px;border:none;background:var(--primary);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;color:white;">${modules[currentModuleIndex+1].code} →</button>` : '<div style="flex:1"></div>'}
+            </div>`;
+
+        document.getElementById('module-content').innerHTML = html;
+    }
+
+    function toggleStudied() {
+        if (studiedSet.has(currentModuleIndex)) {
+            studiedSet.delete(currentModuleIndex);
+        } else {
+            studiedSet.add(currentModuleIndex);
+        }
+        saveStudied();
+        updateNavHighlight();
+        renderModuleContent();
+        if (currentPage === 'home') renderHomePage();
+    }
+
+    // ── VOCAB PROCESSOR ──
+    function processVocab(text) {
+        const keys = Object.keys(vocab).sort((a, b) => b.length - a.length);
+        keys.forEach(term => {
+            const escaped = term.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            const regex = new RegExp(`\\b${escaped}\\b`, 'gi');
+            text = text.replace(regex, match =>
+                `<span class="vocab-term" onclick="openVocabDrawer('${term.replace(/'/g, "\\'")}')">` + match + '</span>'
+            );
+        });
+        return text;
+    }
+
+    // ── VOCAB DRAWER ──
+    function openVocabDrawer(term) {
+        const item = vocab[term];
+        if (!item) return;
+        document.getElementById('vd-english').textContent = term;
+        document.getElementById('vd-sinhala').textContent = 'සිංහල: ' + item.sinhala;
+        document.getElementById('vd-def').innerHTML = item.def;
+        document.getElementById('vocab-backdrop').classList.add('open');
+        document.getElementById('vocab-drawer').classList.add('open');
+    }
+
+    function closeVocabDrawer() {
+        document.getElementById('vocab-backdrop').classList.remove('open');
+        document.getElementById('vocab-drawer').classList.remove('open');
+    }
+    </script>
+
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js').catch(() => {
+                // Try relative path if root-relative fails (e.g. GitHub Pages subpath)
+                navigator.serviceWorker.register('./sw.js');
+            });
+        });
+    }
+    </script>
+</body>
+</html>
